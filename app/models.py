@@ -1,3 +1,109 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
+
+class BikeModel(models.Model):
+    name = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    version = models.SmallIntegerField()
+    release_date = models.DateField()
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Bike(models.Model):
+    bike_model = models.ForeignKey(BikeModel, on_delete=models.CASCADE)
+    manufacturing_date = models.DateField()
+    description = models.TextField(null=True, blank=True)
+    license_plate = models.CharField(max_length=10, unique=True, null=True, blank=True)
+    owner = models.ManyToManyField(User, through="BikeOwnership", through_fields=('bike', 'owner'))
+
+    def __str__(self):
+        return str(self.license_plate)
+    
+
+class BikeOwnership(models.Model):
+    bike = models.ForeignKey(Bike, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    buy_date = models.DateField()
+    sell_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.bike + " " + self.owner.username
+    
+
+class BatteryModel(models.Model):
+    name = models.CharField(max_length=50)
+    capacity = models.DecimalField(max_digits=5, decimal_places=2)
+    weight = models.DecimalField(max_digits=5, decimal_places=2)
+    type = models.CharField(max_length=50)
+    version = models.SmallIntegerField()
+    manufacturer = models.CharField(max_length=50)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class Battery(models.Model):
+    battery_model = models.ForeignKey(BatteryModel, on_delete=models.CASCADE)
+    capacity = models.DecimalField(max_digits=5, decimal_places=2)
+    status = models.CharField(max_length=10)
+    manufacturing_date = models.DateField()
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.battery_model.name + " " + str(self.manufacturing_date) + " " + str(self.id)
+    
+class BatteryStatus(models.Model):
+    battery = models.ForeignKey(Battery, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField()
+    health = models.DecimalField(max_digits=5, decimal_places=2)
+    temperature = models.DecimalField(max_digits=5, decimal_places=2)
+    voltage = models.DecimalField(max_digits=5, decimal_places=2)
+    current = models.DecimalField(max_digits=5, decimal_places=2)
+    charge = models.DecimalField(max_digits=5, decimal_places=2)
+    level = models.DecimalField(max_digits=5, decimal_places=2)
+    charging_status = models.CharField(max_length=10)
+    ride_event = models.ForeignKey('RideEvent', on_delete=models.CASCADE, null=True, blank=True)
+    station = models.ForeignKey('Station', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class Station(models.Model):
+    name = models.CharField(max_length=50)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
+
+class SwapEvent(models.Model):
+    battery = models.ForeignKey(Battery, on_delete=models.CASCADE)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE, null=True, blank=True)
+    bike = models.ForeignKey(Bike, on_delete=models.CASCADE, null=True, blank=True)
+    timestamp = models.DateTimeField()
+    event_type = models.CharField(max_length=10)
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.battery.battery_model.name + " " + str(self.timestamp) + " " + self.event_type
+    
+
+class RideEvent(models.Model):
+    bike = models.ForeignKey(Bike, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField()
+    fault_code = models.CharField(max_length=10)
+    system_fault = models.CharField(max_length=10)
+    status = models.CharField(max_length=10)
+    distanceTravelled = models.DecimalField(max_digits=5, decimal_places=2)
+    speed = models.DecimalField(max_digits=5, decimal_places=2)
+    gear = models.SmallIntegerField()
+    energyConsumed = models.DecimalField(max_digits=5, decimal_places=2)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+
+    def __str__(self):
+        return str(self.bike) + " " + str(self.timestamp)
