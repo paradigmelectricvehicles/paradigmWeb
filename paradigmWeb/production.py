@@ -7,21 +7,21 @@ env = os.getenv
 
 DEBUG = 0
 DATABASES["default"] = {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': "postgres1",
-    'USER': "postgres1",
-    'PASSWORD': "Yabu1234!",
-    'HOST': "postgres1.cxiusmi4ahx1.me-central-1.rds.amazonaws.com",
-    'PORT': '5432',
+    'ENGINE': env("DB_ENGINE"),
+    'NAME': env("DB_NAME"),
+    'USER': env("DB_USER"),
+    'PASSWORD': env("DB_PASSWORD"),
+    'HOST': env("DB_HOST"),
+    'PORT': env("DB_PORT"),
 }
 
 ALLOWED_HOSTS = ["127.0.0.1",env("API_GATEWAY")]
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 60
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SECURE_HSTS_SECONDS = 60
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 # INSTALLED_APPS += ["django_s3_storage"]
 # S3_BUCKET_NAME = env("S3_BUCKET_NAME")
 # STATICFILES_STORAGE = "django_s3_storage.storage.StaticS3Storage"
