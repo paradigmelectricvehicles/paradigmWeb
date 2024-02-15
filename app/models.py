@@ -36,8 +36,8 @@ class BikeOwnership(models.Model):
 
 class BatteryModel(models.Model):
     name = models.CharField(max_length=50)
-    capacity = models.DecimalField(max_digits=5, decimal_places=2)
-    weight = models.DecimalField(max_digits=5, decimal_places=2)
+    capacity = models.DecimalField(max_digits=6, decimal_places=3)
+    weight = models.DecimalField(max_digits=4, decimal_places=2)
     type = models.CharField(max_length=50)
     version = models.SmallIntegerField()
     manufacturer = models.CharField(max_length=50)
@@ -46,28 +46,17 @@ class BatteryModel(models.Model):
     def __str__(self):
         return self.name
 
+
 class Battery(models.Model):
     battery_model = models.ForeignKey(BatteryModel, on_delete=models.CASCADE)
-    capacity = models.DecimalField(max_digits=5, decimal_places=2)
+    distance_travelled = models.PositiveIntegerField(default=0)
+    energy_consumed = models.DecimalField(max_digits=5, decimal_places=1, default=0)
     status = models.CharField(max_length=10)
     manufacturing_date = models.DateField()
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.battery_model.name + " " + str(self.manufacturing_date) + " " + str(self.id)
-    
-class BatteryStatus(models.Model):
-    battery = models.ForeignKey(Battery, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField()
-    health = models.DecimalField(max_digits=5, decimal_places=2)
-    temperature = models.DecimalField(max_digits=5, decimal_places=2)
-    voltage = models.DecimalField(max_digits=5, decimal_places=2)
-    current = models.DecimalField(max_digits=5, decimal_places=2)
-    charge = models.DecimalField(max_digits=5, decimal_places=2)
-    level = models.DecimalField(max_digits=5, decimal_places=2)
-    charging_status = models.CharField(max_length=10)
-    ride_event = models.ForeignKey('RideEvent', on_delete=models.CASCADE, null=True, blank=True)
-    station = models.ForeignKey('Station', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Station(models.Model):
@@ -92,18 +81,42 @@ class SwapEvent(models.Model):
         return self.battery.battery_model.name + " " + str(self.timestamp) + " " + self.event_type
     
 
-class RideEvent(models.Model):
+class Trip(models.Model):
     bike = models.ForeignKey(Bike, on_delete=models.CASCADE)
+    start_timestamp = models.DateTimeField()
+    end_timestamp = models.DateTimeField(null=True, blank=True)
+    battery = models.ForeignKey(Battery, on_delete=models.CASCADE)
+    distance_travelled = models.DecimalField(max_digits=5, decimal_places=2)
+    energy_consumed = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return str(self.bike) + " " + str(self.start_timestamp) + " " + str(self.end_timestamp)
+
+
+class RideEvent(models.Model):
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
     fault_code = models.CharField(max_length=10)
     system_fault = models.CharField(max_length=10)
     status = models.CharField(max_length=10)
-    distanceTravelled = models.DecimalField(max_digits=5, decimal_places=2)
     speed = models.DecimalField(max_digits=5, decimal_places=2)
     gear = models.SmallIntegerField()
-    energyConsumed = models.DecimalField(max_digits=5, decimal_places=2)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
 
     def __str__(self):
         return str(self.bike) + " " + str(self.timestamp)
+
+
+class BatteryStatus(models.Model):
+    battery = models.ForeignKey(Battery, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField()
+    capacity = models.DecimalField(max_digits=6, decimal_places=3)
+    temperature = models.DecimalField(max_digits=5, decimal_places=2)
+    voltage = models.DecimalField(max_digits=5, decimal_places=2)
+    current = models.DecimalField(max_digits=5, decimal_places=2)
+    charge = models.DecimalField(max_digits=5, decimal_places=2)
+    status = models.CharField(max_length=10)
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, null=True, blank=True)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE, null=True, blank=True)
+

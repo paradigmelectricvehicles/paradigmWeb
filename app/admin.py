@@ -1,6 +1,6 @@
 from django.contrib import admin
 from rangefilter.filters import DateRangeFilter, DateTimeRangeFilter
-from .models import BikeModel, Bike, BikeOwnership, BatteryModel, Battery, BatteryStatus, Station, SwapEvent, RideEvent
+from .models import BikeModel, Bike, BikeOwnership, BatteryModel, Battery, BatteryStatus, Station, SwapEvent, RideEvent, Trip
 
 @admin.register(BikeModel)
 class BikeModelAdmin(admin.ModelAdmin):
@@ -25,13 +25,13 @@ class BatteryModelAdmin(admin.ModelAdmin):
 
 @admin.register(Battery)
 class BatteryAdmin(admin.ModelAdmin):
-    list_display = ("battery_model", "capacity", "status", "manufacturing_date")
-    list_filter = ("battery_model", "capacity", "status", ("manufacturing_date", DateRangeFilter))
+    list_display = ("battery_model", "status", "manufacturing_date")
+    list_filter = ("battery_model", "status", ("manufacturing_date", DateRangeFilter))
 
 @admin.register(BatteryStatus)
 class BatteryStatusAdmin(admin.ModelAdmin):
-    list_display = ("battery", "timestamp", "health", "charging_status", "temperature", "voltage", "current", "level", "ride_event", "station")
-    list_filter = ("battery", "charging_status", ("timestamp", DateTimeRangeFilter))
+    list_display = ("battery", "timestamp", "status", "temperature", "voltage", "current", "trip", "station")
+    list_filter = ("battery", "status", ("timestamp", DateTimeRangeFilter))
 
 @admin.register(Station)
 class StationAdmin(admin.ModelAdmin):
@@ -45,5 +45,10 @@ class SwapEventAdmin(admin.ModelAdmin):
 
 @admin.register(RideEvent)
 class RideEventAdmin(admin.ModelAdmin):
-    list_display = ("bike", "timestamp", "fault_code", "speed", "latitude", "longitude")
-    list_filter = ("bike", ("timestamp", DateTimeRangeFilter))
+    list_display = ("trip", "timestamp", "fault_code", "speed", "latitude", "longitude")
+    list_filter = ("trip", ("timestamp", DateTimeRangeFilter))
+
+@admin.register(Trip)
+class TripAdmin(admin.ModelAdmin):
+    list_display = ("bike", "start_timestamp", "end_timestamp", "battery", "distance_travelled", "energy_consumed")
+    list_filter = ("bike", ("start_timestamp", DateTimeRangeFilter), ("end_timestamp", DateTimeRangeFilter), "battery")

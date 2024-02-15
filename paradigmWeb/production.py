@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 env = os.getenv
 
-DEBUG = 0
+DEBUG = env("DEBUG") == "1"
 DATABASES["default"] = {
     'ENGINE': env("DB_ENGINE"),
     'NAME': env("DB_NAME"),
