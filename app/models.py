@@ -86,8 +86,8 @@ class Trip(models.Model):
     start_timestamp = models.DateTimeField()
     end_timestamp = models.DateTimeField(null=True, blank=True)
     battery = models.ForeignKey(Battery, on_delete=models.CASCADE)
-    distance_travelled = models.DecimalField(max_digits=5, decimal_places=2)
-    energy_consumed = models.DecimalField(max_digits=5, decimal_places=2)
+    distance_travelled = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    energy_consumed = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     def __str__(self):
         return str(self.bike) + " " + str(self.start_timestamp) + " " + str(self.end_timestamp)
