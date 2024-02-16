@@ -147,4 +147,4 @@ class AddTripData(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response({'ride_event_id': ride_event.id}, status=status.HTTP_201_CREATED)
+        return Response({'ride_event_id': ride_event.id, 'battery_status_id': battery_status.id}, status=status.HTTP_201_CREATED)
