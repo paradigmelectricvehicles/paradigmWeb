@@ -98,7 +98,7 @@ class EndTrip(APIView):
 
         return Response({'trip_id': trip.id})
     
-class RideEvent(APIView):
+class AddTripData(APIView):
     def post(self, request):
         try:
             trip_id = request.data['trip_id']

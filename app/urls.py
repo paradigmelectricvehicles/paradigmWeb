@@ -3,7 +3,7 @@ from .views import (
     BikeModelList, BikeList, BikeDetail, BikeOwnershipList,
     BatteryModelList, BatteryList, BatteryDetail, BatteryStatusList,
     StationList, SwapEventList,
-    RideEventList, StartTrip, EndTrip, RideEvent
+    RideEventList, StartTrip, EndTrip, AddTripData
 )
 
 app_name = 'app'
@@ -29,5 +29,5 @@ urlpatterns = [
     path('rideevents/', RideEventList.as_view(), name='rideevent-list'),
     path('starttrip/', StartTrip.as_view(), name='start-trip'),
     path('endtrip/', EndTrip.as_view(), name='end-trip'),
-    path('rideevent/', RideEvent.as_view(), name='rideevent-list'),
+    path('tripdata/', AddTripData.as_view(), name='trip-data'),
 ]
