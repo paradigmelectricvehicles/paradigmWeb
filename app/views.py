@@ -2,6 +2,7 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.filters import OrderingFilter
 from .models import BikeModel, Bike, BikeOwnership, BatteryModel, Battery, BatteryStatus, Station, SwapEvent, RideEvent, Trip
 from .serializers import (
     BikeModelSerializer, BikeSerializer, BikeOwnershipSerializer,
@@ -154,4 +155,6 @@ class TripList(generics.ListCreateAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
     pagination_class = LimitOffsetPagination
+    filter_backends = [OrderingFilter]
+    ordering_fields = '__all__'
     ordering = ['-start_timestamp']
