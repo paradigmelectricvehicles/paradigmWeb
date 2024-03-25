@@ -1,5 +1,5 @@
 # your_project/your_app/serializers.py
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, StringRelatedField
 from .models import BikeModel, Bike, BikeOwnership, BatteryModel, Battery, BatteryStatus, Station, SwapEvent, RideEvent, Trip
 
 class BikeModelSerializer(ModelSerializer):
@@ -50,6 +50,8 @@ class RideEventSerializer(ModelSerializer):
         fields = '__all__'
 
 class TripSerializer(ModelSerializer):
+    bike = StringRelatedField()
+    battery = StringRelatedField()
     class Meta:
         model = Trip
         fields = '__all__'

@@ -152,7 +152,7 @@ class AddTripData(APIView):
         return Response({'ride_event_id': ride_event.id, 'battery_status_id': battery_status.id}, status=status.HTTP_201_CREATED)
     
 class TripList(generics.ListCreateAPIView):
-    queryset = Trip.objects.all()
+    queryset = Trip.objects.all().select_related()
     serializer_class = TripSerializer
     pagination_class = LimitOffsetPagination
     filter_backends = [OrderingFilter]
