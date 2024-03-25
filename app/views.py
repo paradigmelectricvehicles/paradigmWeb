@@ -5,7 +5,7 @@ from .models import BikeModel, Bike, BikeOwnership, BatteryModel, Battery, Batte
 from .serializers import (
     BikeModelSerializer, BikeSerializer, BikeOwnershipSerializer,
     BatteryModelSerializer, BatterySerializer, BatteryStatusSerializer,
-    StationSerializer, SwapEventSerializer, RideEventSerializer
+    StationSerializer, SwapEventSerializer, RideEventSerializer, TripSerializer
 )
 
 class BikeModelList(generics.ListCreateAPIView):
@@ -148,3 +148,7 @@ class RideEvent(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({'ride_event_id': ride_event.id}, status=status.HTTP_201_CREATED)
+    
+class TripList(generics.ListCreateAPIView):
+    queryset = Trip.objects.all()
+    serializer_class = TripSerializer
