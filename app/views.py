@@ -154,3 +154,4 @@ class TripList(generics.ListCreateAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
     pagination_class = LimitOffsetPagination
+    ordering = ['-start_timestamp']
