@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 from .models import BikeModel, Bike, BikeOwnership, BatteryModel, Battery, BatteryStatus, Station, SwapEvent, RideEvent, Trip
 from .serializers import (
     BikeModelSerializer, BikeSerializer, BikeOwnershipSerializer,
@@ -152,3 +153,4 @@ class AddTripData(APIView):
 class TripList(generics.ListCreateAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
+    pagination_class = LimitOffsetPagination
