@@ -91,6 +91,10 @@ class Trip(models.Model):
 
     def __str__(self):
         return str(self.bike) + " " + str(self.start_timestamp) + " " + str(self.end_timestamp)
+    
+    @property
+    def status(self):
+        return "Ongoing" if self.end_timestamp is None else "Completed"
 
 
 class RideEvent(models.Model):
