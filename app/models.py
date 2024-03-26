@@ -88,9 +88,18 @@ class Station(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     description = models.TextField(null=True, blank=True)
+    battery_ids = ArrayField(models.PositiveBigIntegerField(), size=12, default=list, blank=True)
 
     def __str__(self):
         return self.name
+    
+    @property
+    def batteries(self):
+        return Battery.objects.filter(id__in=self.battery_ids)
+    
+    @property
+    def last_used(self):
+        return SwapEvent.objects.filter(station=self).latest('timestamp').timestamp
 
 
 class SwapEvent(models.Model):

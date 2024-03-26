@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     BikeModelList, BikeList, BikeDetail, BikeOwnershipList,
     BatteryModelList, BatteryList, BatteryDetail, BatteryStatusList,
-    StationList, SwapEventList,
+    StationList, SwapEventList, TripData,
     RideEventList, StartTrip, EndTrip, AddTripData, TripList
 )
 
@@ -30,5 +30,6 @@ urlpatterns = [
     path('starttrip/', StartTrip.as_view(), name='start-trip'),
     path('endtrip/', EndTrip.as_view(), name='end-trip'),
     path('tripdata/', AddTripData.as_view(), name='trip-data'),
+    path('tripdata/<int:pk>/', TripData.as_view(), name='trip-data-detail'),
     path('trips/', TripList.as_view(), name='trip-list'),
 ]

@@ -39,6 +39,8 @@ class BatteryStatusSerializer(ModelSerializer):
         fields = '__all__'
 
 class StationSerializer(ModelSerializer):
+    batteries = StringRelatedField(many=True)
+    last_used = ReadOnlyField()
     class Meta:
         model = Station
         fields = '__all__'
