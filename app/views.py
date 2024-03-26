@@ -180,7 +180,7 @@ class TripData(APIView):
 
         ride_event_data = RideEventSerializer(ride_events, many=True).data
 
-        return Response({'trip': TripSerializer(trip).data, 'ride_events': ride_event_data}, status=status.HTTP_200_OK)
+        return paginator.get_paginated_response({'trip': TripSerializer(trip).data, 'ride_events': ride_event_data})
 
 
 class TripList(generics.ListCreateAPIView):
