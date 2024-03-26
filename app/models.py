@@ -31,7 +31,7 @@ class BikeOwnership(models.Model):
     sell_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return self.bike + " " + self.owner.username
+        return str(self.bike) + " " + self.owner.username
     
 
 class BatteryModel(models.Model):
