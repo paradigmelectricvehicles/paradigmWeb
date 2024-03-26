@@ -57,6 +57,16 @@ class Battery(models.Model):
 
     def __str__(self):
         return self.battery_model.name + " " + str(self.manufacturing_date) + " " + str(self.id)
+    
+    @property
+    def asset(self):
+        swap_event = SwapEvent.objects.filter(battery=self).latest('timestamp')
+        return swap_event.station if swap_event.station else swap_event.bike
+    
+    @property
+    def asset_type(self):
+        swap_event = SwapEvent.objects.filter(battery=self).latest('timestamp')
+        return "Station" if swap_event.station else "Bike"
 
 
 class Station(models.Model):
@@ -73,9 +83,20 @@ class SwapEvent(models.Model):
     battery = models.ForeignKey(Battery, on_delete=models.CASCADE)
     station = models.ForeignKey(Station, on_delete=models.CASCADE, null=True, blank=True)
     bike = models.ForeignKey(Bike, on_delete=models.CASCADE, null=True, blank=True)
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(db_index=True)
     event_type = models.CharField(max_length=10)
     description = models.TextField(null=True, blank=True)
+    
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                name="station_or_bike",
+                check=(
+                    models.Q(station_id__isnull=True, bike_id__isnull=False)
+                    | models.Q(station_id__isnull=False, bike_id__isnull=True)
+                ),
+            )
+        ]
 
     def __str__(self):
         return self.battery.battery_model.name + " " + str(self.timestamp) + " " + self.event_type

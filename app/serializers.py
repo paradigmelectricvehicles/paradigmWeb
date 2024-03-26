@@ -14,7 +14,6 @@ class BikeOwnershipSerializer(ModelSerializer):
 
 class BikeSerializer(ModelSerializer):
     owner = BikeOwnershipSerializer(many=True, read_only=True)
-
     class Meta:
         model = Bike
         fields = '__all__'
@@ -25,6 +24,8 @@ class BatteryModelSerializer(ModelSerializer):
         fields = '__all__'
 
 class BatterySerializer(ModelSerializer):
+    asset = StringRelatedField()
+    asset_type = ReadOnlyField()
     class Meta:
         model = Battery
         fields = '__all__'
