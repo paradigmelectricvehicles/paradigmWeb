@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 
 
@@ -17,16 +18,25 @@ class Bike(models.Model):
     bike_model = models.ForeignKey(BikeModel, on_delete=models.CASCADE)
     manufacturing_date = models.DateField()
     description = models.TextField(null=True, blank=True)
-    license_plate = models.CharField(max_length=10, unique=True, null=True, blank=True)
+    license_number = models.CharField(max_length=10, unique=True, null=True, blank=True)
     owner = models.ManyToManyField(User, through="BikeOwnership", through_fields=('bike', 'owner'))
+    battery_ids = ArrayField(models.PositiveBigIntegerField(), size=2, default=list, blank=True)
 
     def __str__(self):
-        return str(self.license_plate)
-    
+        return str(self.license_number)
+
     @property
     def current_owner(self):
         return BikeOwnership.objects.filter(bike=self, sell_date=None).last
+
+    @property
+    def last_trip(self):
+        return Trip.objects.filter(bike=self).latest('start_timestamp').start_timestamp
     
+    @property
+    def batteries(self):
+        return Battery.objects.filter(id__in=self.battery_ids)
+
 
 class BikeOwnership(models.Model):
     bike = models.ForeignKey(Bike, on_delete=models.CASCADE)
@@ -36,7 +46,7 @@ class BikeOwnership(models.Model):
 
     def __str__(self):
         return self.owner.username
-    
+
 
 class BatteryModel(models.Model):
     name = models.CharField(max_length=50)
@@ -61,12 +71,12 @@ class Battery(models.Model):
 
     def __str__(self):
         return self.battery_model.name + " " + str(self.manufacturing_date) + " " + str(self.id)
-    
+
     @property
     def asset(self):
         swap_event = SwapEvent.objects.filter(battery=self).latest('timestamp')
         return swap_event.station if swap_event.station else swap_event.bike
-    
+
     @property
     def asset_type(self):
         swap_event = SwapEvent.objects.filter(battery=self).latest('timestamp')
@@ -81,7 +91,7 @@ class Station(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class SwapEvent(models.Model):
     battery = models.ForeignKey(Battery, on_delete=models.CASCADE)
@@ -90,7 +100,7 @@ class SwapEvent(models.Model):
     timestamp = models.DateTimeField(db_index=True)
     event_type = models.CharField(max_length=10)
     description = models.TextField(null=True, blank=True)
-    
+
     class Meta:
         constraints = [
             models.CheckConstraint(
@@ -104,7 +114,7 @@ class SwapEvent(models.Model):
 
     def __str__(self):
         return self.battery.battery_model.name + " " + str(self.timestamp) + " " + self.event_type
-    
+
 
 class Trip(models.Model):
     bike = models.ForeignKey(Bike, on_delete=models.CASCADE)
@@ -116,7 +126,7 @@ class Trip(models.Model):
 
     def __str__(self):
         return str(self.bike) + " " + str(self.start_timestamp) + " " + str(self.end_timestamp)
-    
+
     @property
     def status(self):
         return "Ongoing" if self.end_timestamp is None else "Completed"
@@ -148,4 +158,3 @@ class BatteryStatus(models.Model):
     status = models.CharField(max_length=10)
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, null=True, blank=True)
     station = models.ForeignKey(Station, on_delete=models.CASCADE, null=True, blank=True)
-

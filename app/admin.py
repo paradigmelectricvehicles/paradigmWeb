@@ -9,7 +9,7 @@ class BikeModelAdmin(admin.ModelAdmin):
 
 @admin.register(Bike)
 class BikeAdmin(admin.ModelAdmin):
-    list_display = ("bike_model", "manufacturing_date", "license_plate")
+    list_display = ("bike_model", "manufacturing_date", "license_number", "current_owner")
     list_filter = ("bike_model", ("manufacturing_date", DateRangeFilter))
 
 @admin.register(BikeOwnership)
