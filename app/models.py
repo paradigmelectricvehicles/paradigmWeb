@@ -23,6 +23,10 @@ class Bike(models.Model):
     def __str__(self):
         return str(self.license_plate)
     
+    @property
+    def current_owner(self):
+        return BikeOwnership.objects.filter(bike=self, sell_date=None).last
+    
 
 class BikeOwnership(models.Model):
     bike = models.ForeignKey(Bike, on_delete=models.CASCADE)
@@ -31,7 +35,7 @@ class BikeOwnership(models.Model):
     sell_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return str(self.bike) + " " + self.owner.username
+        return self.owner.username
     
 
 class BatteryModel(models.Model):
