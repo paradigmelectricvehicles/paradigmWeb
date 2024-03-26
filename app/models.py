@@ -134,7 +134,7 @@ class Trip(models.Model):
     energy_consumed = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     def __str__(self):
-        return str(self.bike) + " " + str(self.start_timestamp) + " " + str(self.end_timestamp)
+        return str(self.bike) + " " + str(self.id)
 
     @property
     def status(self):
@@ -153,7 +153,7 @@ class RideEvent(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
 
     def __str__(self):
-        return str(self.bike) + " " + str(self.timestamp)
+        return str(self.trip.id) + " " + str(self.timestamp)
 
 
 class BatteryStatus(models.Model):
