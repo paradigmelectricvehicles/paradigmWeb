@@ -32,7 +32,7 @@ class Bike(models.Model):
 
     @property
     def last_trip(self):
-        return Trip.objects.filter(bike=self).latest('start_timestamp').start_timestamp
+        return Trip.objects.filter(bike=self).latest('start_timestamp')
     
     @property
     def batteries(self):
