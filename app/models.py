@@ -15,6 +15,7 @@ class BikeModel(models.Model):
 
 
 class Bike(models.Model):
+    number = models.CharField(max_length=17, unique=True, db_index=True)
     bike_model = models.ForeignKey(BikeModel, on_delete=models.CASCADE)
     manufacturing_date = models.DateField()
     description = models.TextField(null=True, blank=True)
@@ -36,6 +37,11 @@ class Bike(models.Model):
     @property
     def batteries(self):
         return Battery.objects.filter(id__in=self.battery_ids)
+    
+    @property
+    def location(self):
+        rideevent = RideEvent.objects.filter(trip__bike=self).latest('timestamp')
+        return { "latitude": rideevent.latitude, "longitude": rideevent.longitude, "located_at": rideevent.timestamp } if rideevent else None
 
 
 class BikeOwnership(models.Model):
@@ -62,6 +68,7 @@ class BatteryModel(models.Model):
 
 
 class Battery(models.Model):
+    number = models.CharField(max_length=17, unique=True, db_index=True)
     battery_model = models.ForeignKey(BatteryModel, on_delete=models.CASCADE)
     distance_travelled = models.PositiveIntegerField(default=0)
     energy_consumed = models.DecimalField(max_digits=5, decimal_places=1, default=0)
@@ -84,7 +91,7 @@ class Battery(models.Model):
 
 
 class Station(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True, db_index=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     description = models.TextField(null=True, blank=True)
@@ -139,6 +146,16 @@ class Trip(models.Model):
     @property
     def status(self):
         return "Ongoing" if self.end_timestamp is None else "Completed"
+    
+    @property
+    def start_location(self):
+        rideevent = RideEvent.objects.filter(trip=self).earliest('timestamp')
+        return (rideevent.latitude, rideevent.longitude) if rideevent else None
+
+    @property
+    def end_location(self):
+        rideevent = RideEvent.objects.filter(trip=self).latest('timestamp')
+        return (rideevent.latitude, rideevent.longitude) if rideevent else None
 
 
 class RideEvent(models.Model):

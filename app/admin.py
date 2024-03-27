@@ -9,7 +9,7 @@ class BikeModelAdmin(admin.ModelAdmin):
 
 @admin.register(Bike)
 class BikeAdmin(admin.ModelAdmin):
-    list_display = ("bike_model", "manufacturing_date", "license_number", "current_owner")
+    list_display = ("number", "bike_model", "manufacturing_date", "license_number", "current_owner")
     list_filter = ("bike_model", ("manufacturing_date", DateRangeFilter))
 
 @admin.register(BikeOwnership)
@@ -25,7 +25,7 @@ class BatteryModelAdmin(admin.ModelAdmin):
 
 @admin.register(Battery)
 class BatteryAdmin(admin.ModelAdmin):
-    list_display = ("battery_model", "status", "manufacturing_date")
+    list_display = ("number", "battery_model", "status", "manufacturing_date")
     list_filter = ("battery_model", "status", ("manufacturing_date", DateRangeFilter))
 
 @admin.register(BatteryStatus)
