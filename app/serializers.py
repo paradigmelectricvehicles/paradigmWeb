@@ -17,6 +17,7 @@ class BikeSerializer(ModelSerializer):
     last_trip = ReadOnlyField()
     batteries = StringRelatedField(many=True)
     bike_model = StringRelatedField()
+    location = ReadOnlyField()
     class Meta:
         model = Bike
         fields = '__all__'

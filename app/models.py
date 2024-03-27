@@ -24,7 +24,7 @@ class Bike(models.Model):
     battery_ids = ArrayField(models.PositiveBigIntegerField(), size=2, default=list, blank=True)
 
     def __str__(self):
-        return str(self.license_number)
+        return self.number
 
     @property
     def current_owner(self):
@@ -77,7 +77,7 @@ class Battery(models.Model):
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return self.battery_model.name + " " + str(self.manufacturing_date) + " " + str(self.id)
+        return self.number
 
     @property
     def asset(self):
