@@ -60,6 +60,8 @@ class TripSerializer(ModelSerializer):
     bike = StringRelatedField()
     battery = StringRelatedField()
     status = ReadOnlyField()
+    start_location = ReadOnlyField()
+    end_location = ReadOnlyField()
     class Meta:
         model = Trip
         fields = '__all__'
